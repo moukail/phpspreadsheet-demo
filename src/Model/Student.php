@@ -60,7 +60,7 @@ class Student
         return [
             'id' => $this->id,
             'grade' => $this->grade,
-            'percentage' => $this->percentage,
+            'percentage' => $this->percentage . '%',
             'result' => $this->result,
         ];
     }
