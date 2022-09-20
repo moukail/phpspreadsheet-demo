@@ -28,12 +28,12 @@ class Student
         return $this;
     }
 
-    public function calculateGrade()
+    public function calculateGrade(): void
     {
         $grade = 0;
 
         if ($this->maxTotalScore == 0){
-            return 0;
+            return;
         }
 
         $calc = ($this->totalScore / $this->maxTotalScore) *100;
