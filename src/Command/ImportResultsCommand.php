@@ -70,6 +70,7 @@ class ImportResultsCommand extends Command
 
         $progress = $this->climate->progress()->total($highestRow);
 
+        /** @var Collection $studentResults */
         $studentResults = new ArrayCollection();
 
         // calculate students results
@@ -113,7 +114,6 @@ class ImportResultsCommand extends Command
         $this->climate->table($results2->getValues());
 
         $io->success('Success.');
-        $io->note(sprintf('transactions_added: %s', 'test'));
         return 0;
     }
 

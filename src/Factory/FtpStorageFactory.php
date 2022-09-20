@@ -3,22 +3,14 @@
 namespace App\Factory;
 
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 
-class StorageFactory
+class FtpStorageFactory implements Storage
 {
-    public static function create(string $type)
+    public static function createStorage(): FilesystemOperator
     {
-        $adapter = null;
-
-        if ($type == 'local'){
-            $rootPath = './data';
-            $adapter = new LocalFilesystemAdapter($rootPath);
-        }
-
-        if ($type == 'sftp'){
             $options = FtpConnectionOptions::fromArray([
                 'host' => 'paragin-sftp', // required
                 'port' => 22,
@@ -26,10 +18,8 @@ class StorageFactory
                 'username' => 'moukail', // required
                 'password' => 'pass_1234', // required
             ]);
-            $adapter = new FtpAdapter($options);
 
-        }
+            return new Filesystem(new FtpAdapter($options));
 
-        return new Filesystem($adapter);
     }
 }

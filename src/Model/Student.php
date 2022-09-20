@@ -9,7 +9,7 @@ class Student
     private float $percentage;
     private string $result;
     private float $totalScore;
-    private int $maxTotalScore;
+    private float $maxTotalScore;
 
     public function __construct(string $id)
     {
@@ -22,7 +22,7 @@ class Student
         return $this;
     }
 
-    public function setMaxTotalScore(int $maxTotalScore): self
+    public function setMaxTotalScore(float $maxTotalScore): self
     {
         $this->maxTotalScore = $maxTotalScore;
         return $this;
