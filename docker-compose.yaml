@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  backend:
+    container_name: "paragin"
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - ./:/var/www/backend
+    environment:
+      XDEBUG_TRIGGER: 1
+      PHP_IDE_CONFIG: "serverName=paragin"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  sftp:
+    container_name: paragin-sftp
+    image: atmoz/sftp:alpine
+    volumes:
+      - ./data:/home/moukail/data
+    ports:
+      - "2222:22"
+    command: moukail:pass_1234:1001
+
+networks:
+  default:
+    name: dbf
