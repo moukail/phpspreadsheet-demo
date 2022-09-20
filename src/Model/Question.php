@@ -26,18 +26,18 @@ class Question
         return $this;
     }
 
-    public function setStudentResults(Collection $studentsResults):self
+    public function setStudentResults(Collection $studentsResults): self
     {
         $this->studentsResults = $studentsResults;
         return $this;
     }
 
-    public function addScore(float $score)
+    public function addScore(float $score): void
     {
         $this->scores->add($score);
     }
 
-    public function calculatePValue()
+    public function calculatePValue(): void
     {
         if ($this->maxScore == 0 || $this->scores->isEmpty()){
             return;
@@ -75,18 +75,18 @@ class Question
             return ($x * $y);
         }, $scores, $studentsResults));
 
-        $devision = sqrt((($t * $x2) - pow($x, 2)) * (($t * $y2) - pow($y, 2)));
+        $division = sqrt((($t * $x2) - pow($x, 2)) * (($t * $y2) - pow($y, 2)));
 
-        if($devision == 0){
+        if($division == 0){
             $this->rValue = 0;
             return;
         }
 
-        $this->rValue = (($t * $xy) - ($x * $y)) / $devision;
+        $this->rValue = (($t * $xy) - ($x * $y)) / $division;
 
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'id' => $this->id,

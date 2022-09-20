@@ -36,7 +36,7 @@ class Student
             return;
         }
 
-        $calc = ($this->totalScore / $this->maxTotalScore) *100;
+        $calc = ($this->totalScore / $this->maxTotalScore) * 100;
 
         if($calc <= 20/100){
             $grade = 1.0;
@@ -55,7 +55,7 @@ class Student
         $this->grade = round($grade, 1);
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'id' => $this->id,
