@@ -51,7 +51,7 @@ class Student
         }
 
         $this->percentage = round($calc, 1);
-        $this->result = ($calc >= 70) ? 'Passed': 'Faild';
+        $this->result = ($calc >= 70) ? '<background_blue>Passed</background_blue>': '<background_red>Faild</background_red>';
         $this->grade = round($grade, 1);
     }
 
