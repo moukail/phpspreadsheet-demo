@@ -61,10 +61,6 @@ class ImportResultsCommand extends Command
         $this->climate->table($studentResults->getValues());
         $this->climate->table($questionResults->getValues());
 
-        $this->climate->out('Remember to use your <blink><yellow>blinker</yellow></blink> when turning.');
-        $this->climate->blue('Please <light_red>remember</light_red> to restart the server.');
-        $this->climate->out('Just this <background_red>word</background_red> is a pretty color.');
-
         $io->success('Success.');
         return 0;
     }
