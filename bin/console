@@ -14,12 +14,11 @@ $application = new Application();
 
 $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
 $twig = new \Twig\Environment($loader, [
-    'debug' => true,
-    'cache' => dirname(__DIR__) . '/../var/cache/twig',
+    'debug' => false,
+    'cache' => dirname(__DIR__) . '/var/cache/twig',
 ]);
 
 // pdf
-
 // Configure Dompdf according to your needs
 $pdfOptions = new Options();
 $pdfOptions

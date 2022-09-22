@@ -91,7 +91,7 @@ class ImportResultsCommand extends Command
         $this->climate->table($questionResults->getValues());
 
         $html = $this->twig->render('students-results.html.twig', ['students' => $studentResults]);
-        file_put_contents( dirname(__DIR__) . '/../output/students_results.html', $html);
+        file_put_contents( dirname(__DIR__) . '/../var/output/students_results.html', $html);
 
         $this->dompdf->loadHtml($html);
         // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
@@ -101,7 +101,7 @@ class ImportResultsCommand extends Command
         // Store PDF Binary Data
         $output = $this->dompdf->output();
 
-        file_put_contents( dirname(__DIR__) . '/../output/students_results.pdf', $output);
+        file_put_contents( dirname(__DIR__) . '/../var/output/students_results.pdf', $output);
 
         $io->success('Success.');
         return 0;
