@@ -51,7 +51,7 @@ class ImportResultsCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         // todo select excel file
-/*
+
         $dirListing = $this->filesystem->listContents('');
 
         $files = array_map(function ($fileAtr) {
@@ -59,15 +59,14 @@ class ImportResultsCommand extends Command
         }, $dirListing->toArray());
 
         $input    = $this->climate->radio('Please select your file:', $files);
-        $response = $input->prompt();
-*/
+        $fileName = $input->prompt();
 
 /*
         $fileName = $input->getArgument('fileName');
 */
 
         try {
-            $fileStream = $this->filesystem->readStream('Assignment.xlsx');
+            $fileStream = $this->filesystem->readStream($fileName);
         } catch (FilesystemException $e) {
             $io->error($e->getMessage());
             return 0;
