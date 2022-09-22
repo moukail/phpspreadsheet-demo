@@ -5,13 +5,35 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 use App\Command\ImportResultsCommand;
 use App\Factory\LocalStorageFactory;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use League\CLImate\CLImate;
 use Symfony\Component\Console\Application;
 
 $application = new Application();
 
+$loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
+$twig = new \Twig\Environment($loader, [
+    'debug' => true,
+    'cache' => dirname(__DIR__) . '/../var/cache/twig',
+]);
+
+// pdf
+
+// Configure Dompdf according to your needs
+$pdfOptions = new Options();
+$pdfOptions
+    ->set('defaultFont', 'Arial')
+    ->setIsJavascriptEnabled(true)
+    ->setIsRemoteEnabled(true)
+    //->setDebugPng(true)
+;
+
+// Instantiate Dompdf with our options
+$dompdf = new Dompdf($pdfOptions);
+
 $filesystem = LocalStorageFactory::createStorage();
 
-$application->add(new ImportResultsCommand(new CLImate, $filesystem));
+$application->add(new ImportResultsCommand(new CLImate, $filesystem, $twig, $dompdf));
 
 $application->run();

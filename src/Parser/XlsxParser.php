@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class Xlsx implements Parser
+class XlsxParser implements Parser
 {
     private array $questionIds;
     private array $maxScores;

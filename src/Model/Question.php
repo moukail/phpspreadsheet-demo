@@ -61,12 +61,12 @@ class Question
 
         $x2 = array_sum(
             array_map(function ($score){
-           return $score * $score;
+           return $score ** 2;
         }, $scores));
 
         $y2 = array_sum(
             array_map(function ($result){
-           return $result * $result;
+           return $result ** 2;
         }, $studentsResults));
 
 

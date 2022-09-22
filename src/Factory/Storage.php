@@ -2,9 +2,9 @@
 
 namespace App\Factory;
 
-use League\Flysystem\FilesystemOperator;
+use League\Flysystem\Filesystem;
 
 interface Storage
 {
-    public static function createStorage(): FilesystemOperator;
+    public static function createStorage(): Filesystem;
 }
