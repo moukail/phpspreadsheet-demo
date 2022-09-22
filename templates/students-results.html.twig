@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+{% block content %}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Grade</th>
+        <th scope="col">Percentage</th>
+        <th scope="col">Result</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in students %}
+        <tr>
+            <th scope="row">{{ item.id }}</th>
+            <td>{{ item.grade }}</td>
+            <td>{{ item.percentage }}</td>
+            <td>{{ item.result|e }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
