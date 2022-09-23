@@ -5,7 +5,7 @@ services:
     container_name: "paragin"
     build:
       dockerfile: Dockerfile
-      context: .
+      context: .docker
     volumes:
       - ./:/var/www/backend
     environment:

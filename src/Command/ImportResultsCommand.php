@@ -10,6 +10,7 @@ use League\Flysystem\FilesystemException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Twig\Environment;
@@ -35,7 +36,7 @@ class ImportResultsCommand extends Command
     {
         $this
             ->setName('app:import-results')
-            //->addArgument('fileName',InputArgument::REQUIRED)
+            ->addOption('filename', 'f', InputOption::VALUE_REQUIRED)
             ->setDescription('Add a short description for your command')
         ;
     }
@@ -54,16 +55,16 @@ class ImportResultsCommand extends Command
 
         $dirListing = $this->filesystem->listContents('');
 
-        $files = array_map(function ($fileAtr) {
-            return $fileAtr->path();
-        }, $dirListing->toArray());
+        $fileName = $input->getOption('filename');
 
-        $input    = $this->climate->radio('Please select your file:', $files);
-        $fileName = $input->prompt();
+        if($fileName == null){
+            $files = array_map(function ($fileAtr) {
+                return $fileAtr->path();
+            }, $dirListing->toArray());
 
-/*
-        $fileName = $input->getArgument('fileName');
-*/
+            $input    = $this->climate->radio('Please select your file:', $files);
+            $fileName = $input->prompt();
+        }
 
         try {
             $fileStream = $this->filesystem->readStream($fileName);

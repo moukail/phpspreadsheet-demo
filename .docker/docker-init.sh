@@ -5,6 +5,6 @@ composer install
 ./vendor/bin/psalm
 ./vendor/bin/phpstan analyse src
 
-symfony console app:import-results
+symfony console app:import-results -f Assignment.xlsx
 
 tail -f /dev/null
