@@ -101,7 +101,9 @@ class ImportResultsCommand extends Command
         // Store PDF Binary Data
         $output = $this->dompdf->output();
 
-        file_put_contents( dirname(__DIR__) . '/../var/output/students_results.pdf', $output);
+        if($output){
+            file_put_contents( dirname(__DIR__) . '/../var/output/students_results.pdf', $output);
+        }
 
         $io->success('Success.');
         return 0;

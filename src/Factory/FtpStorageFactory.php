@@ -9,7 +9,7 @@ use League\Flysystem\Ftp\FtpConnectionOptions;
 
 class FtpStorageFactory implements Storage
 {
-    public static function createStorage(): FilesystemOperator
+    public static function createStorage(): Filesystem
     {
             $options = FtpConnectionOptions::fromArray([
                 'host' => 'paragin-sftp', // required
