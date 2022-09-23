@@ -70,7 +70,7 @@ class XlsxParser implements Parser
                 ->setMaxTotalScore(array_sum($this->maxScores[0]))
                 ->setTotalScore(array_sum($rowData[0]));
 
-            $student->calculateGrade();
+            $student->prepareResult();
 
             $this->studentResults->add($student->toArray());
         }
@@ -105,18 +105,24 @@ class XlsxParser implements Parser
     private function prepareQuestionsData(array $ids, $rowData): void
     {
         for ($col = 0; $col < sizeof($ids); ++$col) {
-            if ($this->questionResults->containsKey($ids[$col])){
-                $this->questionResults->get($ids[$col])->addScore($rowData[$col]);
-            } else{
-                $question = new Question($ids[$col]);
-                $question
-                    ->setMaxScore($this->maxScores[0][$col])
-                    ->setStudentResults($this->studentResults)
-                    ->addScore($rowData[$col])
-                ;
 
-                $this->questionResults->set($ids[$col], $question);
+            $questionId = strval($ids[$col]);
+            $score = $rowData[$col];
+            $question = $this->questionResults->get($questionId);
+
+            if ($question){
+                $question->addScore($score);
+                continue;
             }
+
+            $question = new Question($questionId);
+            $question
+                ->setMaxScore($this->maxScores[0][$col])
+                ->setStudentResults($this->studentResults)
+                ->addScore($score)
+            ;
+
+            $this->questionResults->set($questionId, $question);
         }
     }
 }

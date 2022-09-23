@@ -2,6 +2,9 @@
 
 composer install
 
+symfony check:requirements
+symfony check:security
+
 ./vendor/bin/psalm
 ./vendor/bin/phpstan analyse src
 

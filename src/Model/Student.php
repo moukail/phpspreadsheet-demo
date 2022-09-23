@@ -5,9 +5,9 @@ namespace App\Model;
 class Student
 {
     private string $id;
+    private string $result;
     private float $grade;
     private float $percentage;
-    private string $result;
     private float $totalScore;
     private float $maxTotalScore;
 
@@ -28,30 +28,39 @@ class Student
         return $this;
     }
 
-    public function calculateGrade(): void
+    public function prepareResult(): void
     {
-        $grade = 0;
-
         if ($this->maxTotalScore == 0){
             return;
         }
 
-        $calc = ($this->totalScore / $this->maxTotalScore) * 100;
+        $this->calculatePercentage();
+        $this->calculateGrade();
 
-        if($calc <= 20/100){
+        $this->result = ($this->percentage >= 70) ? 'Passed' : 'Faild';
+    }
+
+    private function calculatePercentage(): void
+    {
+        $this->percentage = round(($this->totalScore / $this->maxTotalScore) * 100, 1);
+    }
+
+    private function calculateGrade(): void
+    {
+        $grade = 0;
+
+        if($this->percentage <= 20/100){
             $grade = 1.0;
         }
 
-        if($calc > 20 && $calc < 70){
-            $grade = 1 + ($calc - 20) * (5.5 - 1)/50;
+        if($this->percentage > 20 && $this->percentage < 70){
+            $grade = 1 + ($this->percentage - 20) * (5.5 - 1)/50;
         }
 
-        if($calc >= 70){
-            $grade = 5.5 + ($calc - 70) * (10 - 5.5)/30;
+        if($this->percentage >= 70){
+            $grade = 5.5 + ($this->percentage - 70) * (10 - 5.5)/30;
         }
 
-        $this->percentage = round($calc, 1);
-        $this->result = ($calc >= 70) ? 'Passed' : 'Faild';
         $this->grade = round($grade, 1);
     }
 

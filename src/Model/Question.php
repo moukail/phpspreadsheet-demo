@@ -69,7 +69,6 @@ class Question
            return $result ** 2;
         }, $studentsResults));
 
-
         $xy = array_sum(
             array_map(function ($x, $y) {
             return ($x * $y);
