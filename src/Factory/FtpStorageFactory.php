@@ -12,11 +12,11 @@ class FtpStorageFactory implements Storage
     public static function createStorage(): Filesystem
     {
             $options = FtpConnectionOptions::fromArray([
-                'host' => 'paragin-sftp', // required
-                'port' => 22,
-                'root' => '/data', // required
-                'username' => 'moukail', // required
-                'password' => 'pass_1234', // required
+                'host' => $_ENV['FTP_HOST'], // required
+                'port' => intval($_ENV['FTP_PORT']),
+                'root' => $_ENV['FTP_ROOT'], // required
+                'username' => $_ENV['FTP_USERNAME'], // required
+                'password' => $_ENV['FTP_PASSWORD'], // required
             ]);
 
             return new Filesystem(new FtpAdapter($options));

@@ -4,6 +4,7 @@
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 use App\Command\ImportResultsCommand;
+use App\Factory\FtpStorageFactory;
 use App\Factory\LocalStorageFactory;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -11,6 +12,14 @@ use League\CLImate\CLImate;
 use Symfony\Component\Console\Application;
 
 $application = new Application();
+
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+
+$dotenv->required('FTP_HOST')->notEmpty();
+$dotenv->ifPresent('FTP_PORT')->isInteger();
+
+
 
 $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
 $twig = new \Twig\Environment($loader, [
@@ -31,7 +40,7 @@ $pdfOptions
 // Instantiate Dompdf with our options
 $dompdf = new Dompdf($pdfOptions);
 
-$filesystem = LocalStorageFactory::createStorage();
+$filesystem = FtpStorageFactory::createStorage();
 
 $application->add(new ImportResultsCommand(new CLImate, $filesystem, $twig, $dompdf));
 
