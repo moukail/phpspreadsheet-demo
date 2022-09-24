@@ -12,8 +12,8 @@ class XlsxParser implements Parser
 {
     private array $questionIds;
     private array $maxScores;
-    private Collection $studentResults;
-    private Collection $questionResults;
+    private ArrayCollection $studentResults;
+    private ArrayCollection $questionResults;
 
     private Worksheet $sheet;
     private int $highestRow;

@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 
 sudo dnf -y update
-sudo dnf -y install libxml2-devel sqlite-devel libcurl-devel libpng-devel libsodium-devel
+sudo dnf -y install unzip libxml2-devel sqlite-devel libcurl-devel libpng-devel libsodium-devel #libonig
 sudo dnf --enablerepo=crb -y install libzip-devel
 
 wget http://nl1.php.net/distributions/php-8.1.10.tar.gz
 tar -xzf php-8.1.10.tar.gz
 cd php-8.1.10
 
-./configure --sysconfdir=/etc/php/8.1/cli --with-config-file-path=/etc/php/8.1/cli \
-      --with-config-file-scan-dir=/etc/php/8.1/cli/conf.d --disable-cgi --enable-cli \
-      --prefix=/usr --with-openssl --with-curl --with-sodium --with-zip --with-pdo-mysql=mysqlnd --enable-gd --enable-ftp
+./configure --sysconfdir=/etc/php/8.1/cli --with-config-file-path=/etc/php/8.1/cli --with-config-file-scan-dir=/etc/php/8.1/cli/conf.d \
+    --disable-cgi --enable-cli --prefix=/usr --with-openssl --with-curl --with-zip --with-zlib --enable-mbstring --enable-gd --enable-ftp # --with-sodium
 
 make -j$(nproc) && sudo make install
 

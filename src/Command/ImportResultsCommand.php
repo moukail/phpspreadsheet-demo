@@ -4,11 +4,9 @@ namespace App\Command;
 use App\Parser\XlsxParser;
 use Dompdf\Dompdf;
 use League\CLImate\CLImate;
-use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -53,17 +51,10 @@ class ImportResultsCommand extends Command
 
         // todo select excel file
 
-        $dirListing = $this->filesystem->listContents('');
-
         $fileName = $input->getOption('filename');
 
         if($fileName == null){
-            $files = array_map(function ($fileAtr) {
-                return $fileAtr->path();
-            }, $dirListing->toArray());
-
-            $input    = $this->climate->radio('Please select your file:', $files);
-            $fileName = $input->prompt();
+            $fileName = $this->selectFile();
         }
 
         try {
@@ -85,10 +76,10 @@ class ImportResultsCommand extends Command
         $studentResults = $parser->getStudentResults()->toArray();
 
         $parser->prepareQuestionResults();
-        $questionResults = $parser->getQuestionResults();
+        $questionResults = $parser->getQuestionResults()->toArray();
 
         $this->climate->table($studentResults);
-        $this->climate->table($questionResults->getValues());
+        $this->climate->table($questionResults);
 
         $html = $this->twig->render('students-results.html.twig', ['students' => $studentResults]);
         file_put_contents( dirname(__DIR__) . '/../var/output/students_results.html', $html);
@@ -107,5 +98,18 @@ class ImportResultsCommand extends Command
 
         $io->success('Success.');
         return 0;
+    }
+
+    private function selectFile()
+    {
+        $dirListing = $this->filesystem->listContents('');
+
+        $files = array_map(function ($fileAtr) {
+            return $fileAtr->path();
+        }, $dirListing->toArray());
+
+        $input    = $this->climate->radio('Please select your file:', $files);
+
+        return $input->prompt();
     }
 }

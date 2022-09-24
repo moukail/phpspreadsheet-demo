@@ -16,10 +16,8 @@ $application = new Application();
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
-$dotenv->required('FTP_HOST')->notEmpty();
-$dotenv->ifPresent('FTP_PORT')->isInteger();
-
-
+//$dotenv->required('FTP_HOST')->notEmpty();
+//$dotenv->ifPresent('FTP_PORT')->isInteger();
 
 $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
 $twig = new \Twig\Environment($loader, [
@@ -40,7 +38,7 @@ $pdfOptions
 // Instantiate Dompdf with our options
 $dompdf = new Dompdf($pdfOptions);
 
-$filesystem = FtpStorageFactory::createStorage();
+$filesystem = LocalStorageFactory::createStorage();
 
 $application->add(new ImportResultsCommand(new CLImate, $filesystem, $twig, $dompdf));
 
