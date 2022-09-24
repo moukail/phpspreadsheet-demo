@@ -10,8 +10,8 @@ Vagrant.configure("2") do |config|
 
   config.ssh.insert_key = false
 
-  config.vm.provider "virtualbox" do |vb|
-    vb.customize ["modifyvm", :id, "--memory", "1024"]
-    vb.customize ["modifyvm", :id, "--name", "centos8"]
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+    v.cpus = 1
   end
 end

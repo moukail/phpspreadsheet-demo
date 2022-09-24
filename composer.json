@@ -11,11 +11,23 @@
     "twig/twig": "^3.0",
     "vlucas/phpdotenv": "^5.4"
   },
+  "require-dev": {
+    "phpstan/phpstan": "^1.8",
+    "vimeo/psalm": "^4.27",
+    "doctrine/coding-standard": "^10.0"
+  },
   "autoload": {
     "psr-4": {"App\\": "src/"}
   },
-  "require-dev": {
-    "phpstan/phpstan": "^1.8",
-    "vimeo/psalm": "^4.27"
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "scripts": {
+    "cs-check": "./vendor/bin/phpcs --standard=Doctrine ./src",
+    "cs-fix": "./vendor/bin/phpcbf --standard=Doctrine ./src",
+    "psalm": "./vendor/bin/psalm",
+    "phpstan": "./vendor/bin/phpstan analyse ./src"
   }
 }

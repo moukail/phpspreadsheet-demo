@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
+sudo dnf makecache --refresh
 sudo dnf -y update
-sudo dnf -y install unzip libxml2-devel sqlite-devel libcurl-devel libpng-devel libsodium-devel #libonig
-sudo dnf --enablerepo=crb -y install libzip-devel
+sudo dnf -y install unzip libxml2-devel sqlite-devel libcurl-devel libpng-devel  #libsodium-devel
+sudo dnf --enablerepo=crb -y install libzip-devel oniguruma-devel
 
 wget http://nl1.php.net/distributions/php-8.1.10.tar.gz
 tar -xzf php-8.1.10.tar.gz
@@ -14,6 +15,9 @@ cd php-8.1.10
 make -j$(nproc) && sudo make install
 
 sudo mv /usr/bin/php /usr/bin/php8.1 && sudo ln -s /usr/bin/php8.1 /usr/bin/php
+sudo mkdir -p /etc/php/8.1/cli/conf.d
+cp php.ini-production /etc/php/8.1/cli/php.ini
+
 cd .. && rm -rf php-8.1.10 php-8.1.10.tar.gz
 
 php -v

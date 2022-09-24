@@ -7,28 +7,28 @@ use Doctrine\Common\Collections\Collection;
 
 class Question
 {
-    private string $id;
     private Collection $scores;
     private int $maxScore;
     private float $pValue = 0;
     private float $rValue = 0;
     private Collection $studentsResults;
 
-    public function __construct(string $id)
+    public function __construct(private string $id)
     {
-        $this->id = $id;
         $this->scores = new ArrayCollection();
     }
 
     public function setMaxScore(int $maxScore): self
     {
         $this->maxScore = $maxScore;
+
         return $this;
     }
 
     public function setStudentResults(Collection $studentsResults): self
     {
         $this->studentsResults = $studentsResults;
+
         return $this;
     }
 
@@ -39,7 +39,7 @@ class Question
 
     public function calculatePValue(): void
     {
-        if ($this->maxScore == 0 || $this->scores->isEmpty()){
+        if ($this->maxScore === 0 || $this->scores->isEmpty()) {
             return;
         }
 
@@ -51,8 +51,8 @@ class Question
 
     public function calculateRValue(): void
     {
-        $scores = $this->scores->toArray();
-        $studentsResults =  array_column( $this->studentsResults->toArray(), 'grade');
+        $scores          = $this->scores->toArray();
+        $studentsResults =  array_column($this->studentsResults->toArray(), 'grade');
 
         $t = $this->scores->count();
 
@@ -76,13 +76,13 @@ class Question
 
         $division = sqrt((($t * $x2) - pow($x, 2)) * (($t * $y2) - pow($y, 2)));
 
-        if($division == 0){
+        if ($division === 0) {
             $this->rValue = 0;
+
             return;
         }
 
         $this->rValue = (($t * $xy) - ($x * $y)) / $division;
-
     }
 
     public function toArray(): array
@@ -93,5 +93,4 @@ class Question
             'rValue' => round($this->rValue, 1),
         ];
     }
-
 }

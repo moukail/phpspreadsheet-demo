@@ -3,7 +3,6 @@
 namespace App\Factory;
 
 use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
 
@@ -20,6 +19,5 @@ class FtpStorageFactory implements Storage
             ]);
 
             return new Filesystem(new FtpAdapter($options));
-
     }
 }

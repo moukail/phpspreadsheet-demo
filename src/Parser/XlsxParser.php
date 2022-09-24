@@ -6,6 +6,7 @@ use App\Model\Question;
 use App\Model\Student;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class XlsxParser implements Parser
@@ -21,29 +22,25 @@ class XlsxParser implements Parser
 
     public function __construct(string $file)
     {
-        $this->studentResults = new ArrayCollection();
+        $this->studentResults  = new ArrayCollection();
         $this->questionResults = new ArrayCollection();
 
-        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
-        $this->sheet = $spreadsheet->getSheet(0);
-        $this->highestRow = $this->sheet->getHighestDataRow();
+        $spreadsheet         = IOFactory::load($file);
+        $this->sheet         = $spreadsheet->getSheet(0);
+        $this->highestRow    = $this->sheet->getHighestDataRow();
         $this->highestColumn = $this->sheet->getHighestDataColumn();
 
-        $this->questionIds = $this->sheet->rangeToArray('B1:'.$this->highestColumn.'1', null, true, false);
-        $this->maxScores = $this->sheet->rangeToArray('B2:'.$this->highestColumn.'2', null, true, false);
+        $this->questionIds = $this->sheet->rangeToArray('B1:' . $this->highestColumn . '1', null, true, false);
+        $this->maxScores   = $this->sheet->rangeToArray('B2:' . $this->highestColumn . '2', null, true, false);
     }
 
-    /**
-     * @return Collection
-     */
+    /** @return Collection */
     public function getStudentResults(): Collection
     {
         return $this->studentResults;
     }
 
-    /**
-     * @return Collection
-     */
+    /** @return Collection */
     public function getQuestionResults(): Collection
     {
         return $this->questionResults;
@@ -51,7 +48,7 @@ class XlsxParser implements Parser
 
     private function getRowData($row)
     {
-        return $this->sheet->rangeToArray('A'.$row.':'.$this->highestColumn.$row, null, true, false);
+        return $this->sheet->rangeToArray('A' . $row . ':' . $this->highestColumn . $row, null, true, false);
     }
 
     public function prepareStudentResults(): void
@@ -59,13 +56,12 @@ class XlsxParser implements Parser
         //$progress = $this->climate->progress()->total($this->highestRow);
 
         for ($row = 3; $row <= $this->highestRow; ++$row) {
-
             //$progress->current($row, 'loading');
 
             $rowData = $this->getRowData($row);
 
             $student = (new Student(
-                array_shift($rowData[0])
+                array_shift($rowData[0]),
             ))
                 ->setMaxTotalScore(array_sum($this->maxScores[0]))
                 ->setTotalScore(array_sum($rowData[0]));
@@ -85,8 +81,8 @@ class XlsxParser implements Parser
             $this->prepareQuestionsData($this->questionIds[0], $rowData[0]);
         }
 
-        /** @var Question $next */
-        while ($next = $this->questionResults->next()){
+        while ($next = $this->questionResults->next()) {
+            assert($next instanceof Question);
             $next->calculatePValue();
             $next->calculateRValue();
         }
@@ -100,17 +96,15 @@ class XlsxParser implements Parser
      * @param ArrayCollection $questions
      * @param $ids
      * @param $rowData
-     * @return void
      */
     private function prepareQuestionsData(array $ids, $rowData): void
     {
         for ($col = 0; $col < sizeof($ids); ++$col) {
-
             $questionId = strval($ids[$col]);
-            $score = $rowData[$col];
-            $question = $this->questionResults->get($questionId);
+            $score      = $rowData[$col];
+            $question   = $this->questionResults->get($questionId);
 
-            if ($question){
+            if ($question) {
                 $question->addScore($score);
                 continue;
             }
@@ -119,8 +113,7 @@ class XlsxParser implements Parser
             $question
                 ->setMaxScore($this->maxScores[0][$col])
                 ->setStudentResults($this->studentResults)
-                ->addScore($score)
-            ;
+                ->addScore($score);
 
             $this->questionResults->set($questionId, $question);
         }

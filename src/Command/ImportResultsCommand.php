@@ -15,28 +15,17 @@ use Twig\Environment;
 
 class ImportResultsCommand extends Command
 {
-    private CLImate $climate;
-    private Filesystem $filesystem;
-    private Environment $twig;
-    private Dompdf $dompdf;
-
-    public function __construct(CLImate $climate, Filesystem $filesystem, Environment $twig, Dompdf $dompdf)
+    public function __construct(private CLImate $climate, private Filesystem $filesystem, private Environment $twig, private Dompdf $dompdf)
     {
-        $this->climate = $climate;
-        $this->filesystem = $filesystem;
-        $this->twig = $twig;
-        $this->dompdf = $dompdf;
-
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('app:import-results')
             ->addOption('filename', 'f', InputOption::VALUE_REQUIRED)
-            ->setDescription('Add a short description for your command')
-        ;
+            ->setDescription('Add a short description for your command');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -53,7 +42,7 @@ class ImportResultsCommand extends Command
 
         $fileName = $input->getOption('filename');
 
-        if($fileName == null){
+        if ($fileName === null) {
             $fileName = $this->selectFile();
         }
 
@@ -61,6 +50,7 @@ class ImportResultsCommand extends Command
             $fileStream = $this->filesystem->readStream($fileName);
         } catch (FilesystemException $e) {
             $io->error($e->getMessage());
+
             return 0;
         }
 
@@ -82,7 +72,7 @@ class ImportResultsCommand extends Command
         $this->climate->table($questionResults);
 
         $html = $this->twig->render('students-results.html.twig', ['students' => $studentResults]);
-        file_put_contents( dirname(__DIR__) . '/../var/output/students_results.html', $html);
+        file_put_contents(dirname(__DIR__) . '/../var/output/students_results.html', $html);
 
         $this->dompdf->loadHtml($html);
         // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
@@ -92,11 +82,12 @@ class ImportResultsCommand extends Command
         // Store PDF Binary Data
         $output = $this->dompdf->output();
 
-        if($output){
-            file_put_contents( dirname(__DIR__) . '/../var/output/students_results.pdf', $output);
+        if ($output) {
+            file_put_contents(dirname(__DIR__) . '/../var/output/students_results.pdf', $output);
         }
 
         $io->success('Success.');
+
         return 0;
     }
 
@@ -108,7 +99,7 @@ class ImportResultsCommand extends Command
             return $fileAtr->path();
         }, $dirListing->toArray());
 
-        $input    = $this->climate->radio('Please select your file:', $files);
+        $input = $this->climate->radio('Please select your file:', $files);
 
         return $input->prompt();
     }
