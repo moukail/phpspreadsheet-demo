@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Model;
 
@@ -76,7 +76,7 @@ class Question
 
         $division = sqrt((($t * $x2) - pow($x, 2)) * (($t * $y2) - pow($y, 2)));
 
-        if ($division === 0) {
+        if ($division == 0) {
             $this->rValue = 0;
 
             return;

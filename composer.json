@@ -8,6 +8,7 @@
     "league/flysystem": "^3.0",
     "league/flysystem-ftp": "^3.0",
     "dompdf/dompdf": "^2.0",
+    "mpdf/mpdf": "^8.1",
     "twig/twig": "^3.0",
     "vlucas/phpdotenv": "^5.4"
   },

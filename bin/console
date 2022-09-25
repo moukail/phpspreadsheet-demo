@@ -3,15 +3,15 @@
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use App\Command\ImportResultsCommand;
-use App\Factory\FtpStorageFactory;
-use App\Factory\LocalStorageFactory;
-use Dompdf\Dompdf;
-use Dompdf\Options;
-use League\CLImate\CLImate;
+use App\Factory\MpdfFactory;
 use Symfony\Component\Console\Application;
+use League\CLImate\CLImate;
 
-$application = new Application();
+use App\Command\ImportResultsCommand;
+use App\Factory\DompdfFactory;
+use App\Factory\LocalStorageFactory;
+use App\Factory\TwigEnvironmentFactory;
+use App\Parser\XlsxParser;
 
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
@@ -19,27 +19,13 @@ $dotenv->load();
 //$dotenv->required('FTP_HOST')->notEmpty();
 //$dotenv->ifPresent('FTP_PORT')->isInteger();
 
-$loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/templates');
-$twig = new \Twig\Environment($loader, [
-    'debug' => false,
-    'cache' => dirname(__DIR__) . '/var/cache/twig',
-]);
-
-// pdf
-// Configure Dompdf according to your needs
-$pdfOptions = new Options();
-$pdfOptions
-    ->set('defaultFont', 'Arial')
-    ->setIsJavascriptEnabled(true)
-    ->setIsRemoteEnabled(true)
-    //->setDebugPng(true)
-;
-
-// Instantiate Dompdf with our options
-$dompdf = new Dompdf($pdfOptions);
-
 $filesystem = LocalStorageFactory::createStorage();
+$twig = TwigEnvironmentFactory::createEnvironment();
+$pdf = DompdfFactory::createPdfRenderer();
 
-$application->add(new ImportResultsCommand(new CLImate, $filesystem, $twig, $dompdf));
+$application = new Application();
 
+$application->add(new ImportResultsCommand(new XlsxParser(), new CLImate, $filesystem, $twig, $pdf));
 $application->run();
+
+

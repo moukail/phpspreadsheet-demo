@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Factory;
 
@@ -6,7 +6,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
 
-class FtpStorageFactory implements Storage
+class FtpStorageFactory implements StorageFactory
 {
     public static function createStorage(): Filesystem
     {

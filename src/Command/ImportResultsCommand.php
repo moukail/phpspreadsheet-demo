@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace App\Command;
 
-use App\Parser\XlsxParser;
-use Dompdf\Dompdf;
+use App\Parser\Parser;
+use App\Pdf\PdfRenderer;
 use League\CLImate\CLImate;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
@@ -15,7 +16,14 @@ use Twig\Environment;
 
 class ImportResultsCommand extends Command
 {
-    public function __construct(private CLImate $climate, private Filesystem $filesystem, private Environment $twig, private Dompdf $dompdf)
+    public function __construct
+    (
+        private Parser $parser,
+        private CLImate $climate,
+        private Filesystem $filesystem,
+        private Environment $twig,
+        private PdfRenderer $pdf
+    )
     {
         parent::__construct();
     }
@@ -60,13 +68,13 @@ class ImportResultsCommand extends Command
 
         // todo validate excel file
 
-        $parser = new XlsxParser($file);
+        $this->parser->parse($file);
 
-        $parser->prepareStudentResults();
-        $studentResults = $parser->getStudentResults()->toArray();
+        $this->parser->prepareStudentResults();
+        $studentResults = $this->parser->getStudentResults()->toArray();
 
-        $parser->prepareQuestionResults();
-        $questionResults = $parser->getQuestionResults()->toArray();
+        $this->parser->prepareQuestionResults();
+        $questionResults = $this->parser->getQuestionResults()->toArray();
 
         $this->climate->table($studentResults);
         $this->climate->table($questionResults);
@@ -74,13 +82,7 @@ class ImportResultsCommand extends Command
         $html = $this->twig->render('students-results.html.twig', ['students' => $studentResults]);
         file_put_contents(dirname(__DIR__) . '/../var/output/students_results.html', $html);
 
-        $this->dompdf->loadHtml($html);
-        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
-        $this->dompdf->setPaper('A4', 'portrait');
-        // Render the HTML as PDF
-        $this->dompdf->render();
-        // Store PDF Binary Data
-        $output = $this->dompdf->output();
+        $output = $this->pdf->output($html);
 
         if ($output) {
             file_put_contents(dirname(__DIR__) . '/../var/output/students_results.pdf', $output);

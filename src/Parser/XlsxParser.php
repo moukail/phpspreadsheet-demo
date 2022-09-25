@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Parser;
 
@@ -20,18 +20,10 @@ class XlsxParser implements Parser
     private int $highestRow;
     private string $highestColumn;
 
-    public function __construct(string $file)
+    public function __construct()
     {
         $this->studentResults  = new ArrayCollection();
         $this->questionResults = new ArrayCollection();
-
-        $spreadsheet         = IOFactory::load($file);
-        $this->sheet         = $spreadsheet->getSheet(0);
-        $this->highestRow    = $this->sheet->getHighestDataRow();
-        $this->highestColumn = $this->sheet->getHighestDataColumn();
-
-        $this->questionIds = $this->sheet->rangeToArray('B1:' . $this->highestColumn . '1', null, true, false);
-        $this->maxScores   = $this->sheet->rangeToArray('B2:' . $this->highestColumn . '2', null, true, false);
     }
 
     /** @return Collection */
@@ -46,9 +38,15 @@ class XlsxParser implements Parser
         return $this->questionResults;
     }
 
-    private function getRowData($row)
+    public function parse(string $file): void
     {
-        return $this->sheet->rangeToArray('A' . $row . ':' . $this->highestColumn . $row, null, true, false);
+        $spreadsheet         = IOFactory::load($file);
+        $this->sheet         = $spreadsheet->getSheet(0);
+        $this->highestRow    = $this->sheet->getHighestDataRow();
+        $this->highestColumn = $this->sheet->getHighestDataColumn();
+
+        $this->questionIds = $this->sheet->rangeToArray('B1:' . $this->highestColumn . '1', null, true, false);
+        $this->maxScores   = $this->sheet->rangeToArray('B2:' . $this->highestColumn . '2', null, true, false);
     }
 
     public function prepareStudentResults(): void
@@ -92,9 +90,13 @@ class XlsxParser implements Parser
         });
     }
 
+    private function getRowData(int $row): array
+    {
+        return $this->sheet->rangeToArray('A' . $row . ':' . $this->highestColumn . $row, null, true, false);
+    }
+
     /**
-     * @param ArrayCollection $questions
-     * @param $ids
+     * @param array $ids
      * @param $rowData
      */
     private function prepareQuestionsData(array $ids, $rowData): void
