@@ -10,6 +10,6 @@ symfony check:security
 composer psalm
 composer phpstan
 
-symfony console app:import-results -f Assignment.xlsx
+symfony console app:import-results -f Assignment.xlsx -t console
 
 tail -f /dev/null

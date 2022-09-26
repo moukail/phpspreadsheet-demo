@@ -12,7 +12,7 @@ class TwigEnvironmentFactory
         $loader = new FilesystemLoader(dirname(__DIR__) . '/../templates');
         return new Environment($loader, [
             'debug' => false,
-            'cache' => dirname(__DIR__) . '/var/cache/twig',
+            'cache' => dirname(__DIR__) . '/../var/cache/twig',
         ]);
     }
 }
