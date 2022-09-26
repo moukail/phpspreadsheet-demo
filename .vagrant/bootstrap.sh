@@ -27,3 +27,5 @@ curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --fi
 # Symfony CLI
 #  wget https://github.com/symfony-cli/symfony-cli/releases/latest/download/symfony-cli_linux_amd64.tar.gz
 wget https://get.symfony.com/cli/installer -O - | bash && sudo mv ~/.symfony5/bin/symfony /usr/bin/symfony
+
+

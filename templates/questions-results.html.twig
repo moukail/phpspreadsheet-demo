@@ -4,18 +4,16 @@
     <thead>
     <tr>
         <th scope="col">#</th>
-        <th scope="col">Grade</th>
-        <th scope="col">Percentage</th>
-        <th scope="col">Result</th>
+        <th scope="col">pValue</th>
+        <th scope="col">rValue</th>
     </tr>
     </thead>
     <tbody>
     {% for item in data %}
         <tr>
             <th scope="row">{{ item.id }}</th>
-            <td>{{ item.grade }}</td>
-            <td>{{ item.percentage }}</td>
-            <td>{{ item.result|e }}</td>
+            <td>{{ item.pValue }}</td>
+            <td>{{ item.rValue }}</td>
         </tr>
     {% endfor %}
     </tbody>

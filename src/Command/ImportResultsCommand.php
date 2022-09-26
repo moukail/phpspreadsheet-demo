@@ -50,9 +50,14 @@ class ImportResultsCommand extends Command
         // todo select excel file
 
         $fileName = $input->getOption('filename');
+        $type = $input->getOption('type');
 
         if ($fileName === null) {
             $fileName = $this->selectFile();
+        }
+
+        if ($type === null) {
+            $type = $this->selectOutput();
         }
 
         try {
@@ -77,31 +82,40 @@ class ImportResultsCommand extends Command
         $this->parser->prepareQuestionResults();
         $questionResults = $this->parser->getQuestionResults()->toArray();
 
-        $type = $input->getOption('type');
-
-        if ($type === null) {
-            $type = $this->selectOutput();
-        }
-
         if ($type == 'console'){
             $this->climate->table($studentResults);
             $this->climate->table($questionResults);
         }
 
-        $html = $this->twig->render('students-results.html.twig', ['students' => $studentResults]);
-
         if ($type == 'html'){
-            file_put_contents(dirname(__DIR__) . '/../var/output/students_results.html', $html);
+            $this->saveAsHtml($studentResults,'students-results');
+            $this->saveAsHtml($questionResults, 'questions-results');
         }
 
         if ($type == 'pdf'){
-            $output = $this->pdf->output($html);
-            file_put_contents(dirname(__DIR__) . '/../var/output/students_results.pdf', $output);
+            $this->saveAsPdf($studentResults, 'students-results');
+            $this->saveAsPdf($questionResults, 'questions-results');
         }
 
         $io->success('Success.');
 
         return 0;
+    }
+
+    private function saveAsHtml($data, $filename)
+    {
+        $html = $this->twig->render($filename. '.html.twig', ['data' => $data]);
+
+        file_put_contents(dirname(__DIR__) . '/../var/output/'.$filename.'.html', $html);
+    }
+
+    private function saveAsPdf($data, $filename)
+    {
+        $html = $this->twig->render($filename. '.html.twig', ['data' => $data]);
+
+        $pdf = $this->pdf->output($html);
+
+        file_put_contents(dirname(__DIR__) . '/../var/output/'.$filename.'.pdf', $pdf);
     }
 
     private function selectFile()
