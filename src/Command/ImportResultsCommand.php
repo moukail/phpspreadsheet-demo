@@ -33,6 +33,7 @@ class ImportResultsCommand extends Command
         $this
             ->setName('app:import-results')
             ->addOption('filename', 'f', InputOption::VALUE_REQUIRED)
+            ->addOption('type', 't', InputOption::VALUE_REQUIRED)
             ->setDescription('Add a short description for your command');
     }
 
@@ -76,15 +77,25 @@ class ImportResultsCommand extends Command
         $this->parser->prepareQuestionResults();
         $questionResults = $this->parser->getQuestionResults()->toArray();
 
-        $this->climate->table($studentResults);
-        $this->climate->table($questionResults);
+        $type = $input->getOption('type');
+
+        if ($type === null) {
+            $type = $this->selectOutput();
+        }
+
+        if ($type == 'console'){
+            $this->climate->table($studentResults);
+            $this->climate->table($questionResults);
+        }
 
         $html = $this->twig->render('students-results.html.twig', ['students' => $studentResults]);
-        file_put_contents(dirname(__DIR__) . '/../var/output/students_results.html', $html);
 
-        $output = $this->pdf->output($html);
+        if ($type == 'html'){
+            file_put_contents(dirname(__DIR__) . '/../var/output/students_results.html', $html);
+        }
 
-        if ($output) {
+        if ($type == 'pdf'){
+            $output = $this->pdf->output($html);
             file_put_contents(dirname(__DIR__) . '/../var/output/students_results.pdf', $output);
         }
 
@@ -102,6 +113,13 @@ class ImportResultsCommand extends Command
         }, $dirListing->toArray());
 
         $input = $this->climate->radio('Please select your file:', $files);
+
+        return $input->prompt();
+    }
+
+    private function selectOutput()
+    {
+        $input = $this->climate->radio('Please select output type:', ['console', 'pdf', 'html']);
 
         return $input->prompt();
     }
