@@ -15,7 +15,8 @@
   "require-dev": {
     "phpstan/phpstan": "^1.8",
     "vimeo/psalm": "^4.27",
-    "doctrine/coding-standard": "^10.0"
+    "doctrine/coding-standard": "^10.0",
+    "phpmetrics/phpmetrics": "^2.8"
   },
   "autoload": {
     "psr-4": {"App\\": "src/"}
@@ -29,6 +30,7 @@
     "cs-check": "./vendor/bin/phpcs --standard=Doctrine ./src",
     "cs-fix": "./vendor/bin/phpcbf --standard=Doctrine ./src",
     "psalm": "./vendor/bin/psalm",
-    "phpstan": "./vendor/bin/phpstan analyse ./src"
+    "phpstan": "./vendor/bin/phpstan analyse ./src",
+    "phpmetrics": "./vendor/bin/phpmetrics --report-html=myreport ./src"
   }
 }
