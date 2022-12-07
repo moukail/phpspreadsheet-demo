@@ -30,7 +30,7 @@
     "cs-check": "./vendor/bin/phpcs --standard=Doctrine ./src",
     "cs-fix": "./vendor/bin/phpcbf --standard=Doctrine ./src",
     "psalm": "./vendor/bin/psalm",
-    "phpstan": "./vendor/bin/phpstan analyse ./src",
+    "phpstan": "./vendor/bin/phpstan analyse ./src --memory-limit 256M",
     "phpmetrics": "./vendor/bin/phpmetrics --report-html=myreport ./src"
   }
 }

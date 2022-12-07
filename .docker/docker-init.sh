@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-composer install
+cp .env.develop .env
+
+composer update
 
 symfony check:requirements
 symfony check:security
