@@ -1,0 +1,1 @@
+https://www.scribbr.nl/statistiek/pearson-correlatie/
