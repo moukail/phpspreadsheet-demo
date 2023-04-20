@@ -30,7 +30,7 @@ class Student
 
     public function prepareResult(): void
     {
-        if ($this->maxTotalScore === 0) {
+        if ($this->maxTotalScore == 0) {
             return;
         }
 

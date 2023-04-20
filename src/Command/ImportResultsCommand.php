@@ -2,6 +2,10 @@
 
 namespace App\Command;
 
+use App\Output\ConsoleOutput;
+use App\Output\HtmlOutput;
+use App\Output\OutputInterface as MyOutputInterface;
+use App\Output\PdfOutput;
 use App\Parser\Parser;
 use App\Pdf\PdfRenderer;
 use League\CLImate\CLImate;
@@ -16,6 +20,10 @@ use Twig\Environment;
 
 class ImportResultsCommand extends Command
 {
+    private array $outputTypes = ['console', 'pdf', 'html'];
+    private string $file = '/tmp/fileStream';
+    private MyOutputInterface $myOutput;
+
     public function __construct
     (
         private Parser $parser,
@@ -33,7 +41,7 @@ class ImportResultsCommand extends Command
         $this
             ->setName('app:import-results')
             ->addOption('filename', 'f', InputOption::VALUE_REQUIRED)
-            ->addOption('type', 't', InputOption::VALUE_REQUIRED)
+            ->addOption('output', 'o', InputOption::VALUE_REQUIRED)
             ->setDescription('Add a short description for your command');
     }
 
@@ -47,34 +55,16 @@ class ImportResultsCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
 
-        // todo select excel file
-
-        $fileName = $input->getOption('filename');
-        $type = $input->getOption('type');
-
-        if ($fileName === null) {
-            $fileName = $this->selectFile();
-        }
-
-        if ($type === null) {
-            $type = $this->selectOutput();
-        }
+        $this->setOutputType($input, $io);
 
         try {
-            $fileStream = $this->filesystem->readStream($fileName);
+            $this->setFile($input);
         } catch (FilesystemException $e) {
             $io->error($e->getMessage());
-
-            return 0;
+            return 1;
         }
 
-        $file = '/tmp/fileStream';
-
-        file_put_contents($file, $fileStream);
-
-        // todo validate excel file
-
-        $this->parser->parse($file);
+        $this->parser->parse($this->file);
 
         $this->parser->prepareStudentResults();
         $studentResults = $this->parser->getStudentResults()->toArray();
@@ -82,40 +72,11 @@ class ImportResultsCommand extends Command
         $this->parser->prepareQuestionResults();
         $questionResults = $this->parser->getQuestionResults()->toArray();
 
-        if ($type == 'console'){
-            $this->climate->table($studentResults);
-            $this->climate->table($questionResults);
-        }
+        $this->myOutput->print($studentResults, 'students-results');
+        $this->myOutput->print($questionResults, 'questions-results');
 
-        if ($type == 'html'){
-            $this->saveAsHtml($studentResults,'students-results');
-            $this->saveAsHtml($questionResults, 'questions-results');
-        }
-
-        if ($type == 'pdf'){
-            $this->saveAsPdf($studentResults, 'students-results');
-            $this->saveAsPdf($questionResults, 'questions-results');
-        }
-
-        $io->success('Success.');
-
+        $io->success('Success. the file is saved in var/output dir');
         return 0;
-    }
-
-    private function saveAsHtml($data, $filename)
-    {
-        $html = $this->twig->render($filename. '.html.twig', ['data' => $data]);
-
-        file_put_contents(dirname(__DIR__) . '/../var/output/'.$filename.'.html', $html);
-    }
-
-    private function saveAsPdf($data, $filename)
-    {
-        $html = $this->twig->render($filename. '.html.twig', ['data' => $data]);
-
-        $pdf = $this->pdf->output($html);
-
-        file_put_contents(dirname(__DIR__) . '/../var/output/'.$filename.'.pdf', $pdf);
     }
 
     private function selectFile()
@@ -133,8 +94,40 @@ class ImportResultsCommand extends Command
 
     private function selectOutput()
     {
-        $input = $this->climate->radio('Please select output type:', ['console', 'pdf', 'html']);
-
+        $input = $this->climate->radio('Please select output type:', $this->outputTypes);
         return $input->prompt();
+    }
+
+    private function setOutputType(InputInterface $input, SymfonyStyle $io): void
+    {
+        $type = $input->getOption('output');
+        if ($type === null) {
+            $type = $this->selectOutput();
+        }
+
+        if (! in_array($type, $this->outputTypes)){
+            $io->error("Output type $type is not supported");
+        }
+
+        match($type){
+            'html' => $this->myOutput = new HtmlOutput($this->twig),
+            'pdf' => $this->myOutput = new PdfOutput($this->twig, $this->pdf),
+            default => $this->myOutput = new ConsoleOutput($this->climate),
+        };
+    }
+
+    /**
+     * @param InputInterface $input
+     * @return void
+     * @throws FilesystemException
+     */
+    private function setFile(InputInterface $input): void
+    {
+        $fileName = $input->getOption('filename');
+        if ($fileName === null) {
+            $fileName = $this->selectFile();
+        }
+        $fileStream = $this->filesystem->readStream($fileName);
+        file_put_contents($this->file, $fileStream);
     }
 }

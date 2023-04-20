@@ -11,7 +11,7 @@ class TwigEnvironmentFactory
     {
         $loader = new FilesystemLoader(dirname(__DIR__) . '/../templates');
         return new Environment($loader, [
-            'debug' => $_ENV['APP_DEBUG'],
+            'debug' => $_ENV['APP_DEBUG'] ?? false,
             'cache' => dirname(__DIR__) . '/../var/cache/twig',
         ]);
     }

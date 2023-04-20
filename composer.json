@@ -1,6 +1,6 @@
 {
   "require": {
-    "php": "~8.1",
+    "php": "^8.1",
     "doctrine/collections": "2.0.x-dev",
     "phpoffice/phpspreadsheet": "^1.24",
     "symfony/console": "v6.1.4",

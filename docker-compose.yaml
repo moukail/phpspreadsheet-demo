@@ -9,7 +9,7 @@ services:
     volumes:
       - ./:/var/www/backend
     environment:
-      XDEBUG_TRIGGER: 1
+      #XDEBUG_TRIGGER: 1
       PHP_IDE_CONFIG: "serverName=paragin"
     extra_hosts:
       - "host.docker.internal:host-gateway"
