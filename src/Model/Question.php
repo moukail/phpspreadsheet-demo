@@ -56,17 +56,17 @@ class Question
         $x = array_sum($scores);
         $y = array_sum($studentsResults);
 
-        $x2 = $this->x2($scores);
-        $y2 = $this->y2($studentsResults);
-        $xy = $this->xy($scores, $studentsResults);
+        $x2 = $this->getX2($scores);
+        $y2 = $this->getY2($studentsResults);
 
-        $division = sqrt((($t * $x2) - pow($x, 2)) * (($t * $y2) - pow($y, 2)));
+        $division = $this->getDivision($x2, $y2, $t, $x, $y);
 
         if ($division == 0) {
             $this->rValue = 0;
             return;
         }
 
+        $xy = $this->getXY($scores, $studentsResults);
         $this->rValue = (($t * $xy) - ($x * $y)) / $division;
     }
 
@@ -79,11 +79,14 @@ class Question
         ];
     }
 
-    /**
-     * @param array $scores
-     * @return float|int
-     */
-    private function x2(array $scores): int|float
+    private function getXY(array $scores, array $studentsResults): int|float
+    {
+        return array_sum(
+            array_map(function ($x, $y) {
+                return ($x * $y);
+            }, $scores, $studentsResults));
+    }
+    private function getX2(array $scores): int|float
     {
         return array_sum(
             array_map(function ($score) {
@@ -91,11 +94,7 @@ class Question
             }, $scores));
     }
 
-    /**
-     * @param array $studentsResults
-     * @return float|int
-     */
-    private function y2(array $studentsResults): int|float
+    private function getY2(array $studentsResults): int|float
     {
         return array_sum(
             array_map(function ($result) {
@@ -103,16 +102,8 @@ class Question
             }, $studentsResults));
     }
 
-    /**
-     * @param array $scores
-     * @param array $studentsResults
-     * @return float|int
-     */
-    private function xy(array $scores, array $studentsResults): int|float
+    private function getDivision(int|float $x2, int|float $y2, ?int $t, float|int $x, float|int $y): float
     {
-        return array_sum(
-            array_map(function ($x, $y) {
-                return ($x * $y);
-            }, $scores, $studentsResults));
+        return sqrt((($t * $x2) - pow($x, 2)) * (($t * $y2) - pow($y, 2)));
     }
 }
